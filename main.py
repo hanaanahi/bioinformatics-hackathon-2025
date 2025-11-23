@@ -2,6 +2,7 @@ import requests
 from google import genai
 import os 
 from dotenv import load_dotenv
+import streamlit as st
 
 load_dotenv()
 GOOGLE_API = os.getenv("GEMINI_API_KEY")
@@ -150,12 +151,35 @@ def ai_summary(json_data):
     return response.text
 
 
-if __name__ == "__main__":
-    query = input("enter gene symbol!")
-
-    print(f"searching for {query}")
+#if __name__ == "__main__":
+#    query = input("enter gene symbol!")
+#
+#    print(f"searching for {query}")
 
     #print("clinicaltables: ", find_snp(query))
-    print("myvariant: ", myvariant_query(query))
+#    print("myvariant: ", myvariant_query(query))
 
     #print("ai summary: ", ai_summary(myvariant_query(query)))
+
+
+################### STREAMLIT UI ###########################
+st.title("Welcome to your Genetic Variant AI Agent!")
+st.write("Enter a gene ID or SNP (e.g., **BRCA1**, rs12345)")
+
+identifier = st.text_input("Gene ID or SNP")
+if st.button("Summarize"):
+    if not identifier:
+        st.error("Please enter a gene ID or SNP.")
+    else:
+        st.info("Fetching data from MyVariant.info...")
+        data = myvariant_query(identifier)
+
+        st.success("Data retrieved!")
+        st.subheader("Raw JSON Data")
+        st.json(data)
+
+        st.info("Generating AI summary...")
+        summary = ai_summary(data)
+
+        st.subheader("AI Summary")
+        st.write(summary)
