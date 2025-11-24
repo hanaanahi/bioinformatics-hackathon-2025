@@ -15,4 +15,26 @@ Your task:
 2. **Clone your fork**
    ```bash
    git clone https://github.com/<your-username>/bioinformatics-hackathon-2025.git
-3. 
+3. **Create a new folder for your submission**
+
+Name it after your team or project (no spaces).
+Example: mkdir team_genespark
+
+4. **Add your project files**
+Include the following (at minimum):
+
+- README.md – short summary of your approach and findings
+- main.py or notebook.ipynb – your main code file
+- Any data files or dependencies (optional)
+
+5. **Commit and push your changes**
+
+git add .
+git commit -m "Added team_genespark submission"
+git push origin main
+
+6. **Create a Pull Request (PR)**
+Go to your fork on GitHub → click “Compare & pull request” → add a short note about your project → click “Create pull request.”
+
+**Submission Deadline**:
+All pull requests must be submitted by Nov 23, 11:59 PM (local time).
