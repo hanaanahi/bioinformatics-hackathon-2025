@@ -173,6 +173,22 @@ async function groqSummarize(apiKey, facts) {
   return { title: "Insight Summary", clinical_notes: text, sources: [] };
 }
 
+async function claudeSummarizeViaProxy(facts) {
+const r = await fetch("http://localhost:8787/api/claude", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ facts }),
+});
+if (!r.ok) throw new Error(`Proxy error: ${await r.text()}`);
+const { text } = await r.json();
+try {
+const s = text.indexOf("{");
+const e = text.lastIndexOf("}");
+if (s !== -1 && e !== -1) return JSON.parse(text.slice(s, e + 1));
+} catch {}
+return { title: "Insight Summary", clinical_notes: text, sources: [] };
+}
+
 // ---------------- External hooks: ClinVar & Open Targets ----------------
 async function fetchClinVarByGene(symbol, opts) {
   opts = opts || {}; const retmax = opts.retmax || 10;
@@ -263,6 +279,8 @@ async function fetchOpenTargetsAssociations(ensemblId, opts) {
   }));
 }
 
+
+
 // ---------------- Export helpers ----------------
 function download(filename, text, type) {
   type = type || "text/plain";
@@ -342,10 +360,10 @@ export default function App() {
         setRaw({ source: "ensembl", data: ens });
         const facts = { type: "snp", core: base };
         let summary = null;
-        if (apiKey) {
-          try {
-            summary = aiProvider === "gemini" ? await geminiSummarize(apiKey, facts) : await groqSummarize(apiKey, facts);
-          } catch (e) { setAiError(e.message); }
+        try {
+        summary = await claudeSummarizeViaProxy(facts);
+        } catch (e) {
+        setAiError(e.message);
         }
         setInsight({ base, summary });
         // Hooks: ClinVar for rsID
@@ -358,9 +376,10 @@ export default function App() {
         setRaw({ source: "mygene", data: gene });
         const facts = { type: "gene", core: base };
         let summary = null;
-        if (apiKey) {
-          try { summary = aiProvider === "gemini" ? await geminiSummarize(apiKey, facts) : await groqSummarize(apiKey, facts); }
-          catch (e) { setAiError(e.message); }
+        try {
+        summary = await claudeSummarizeViaProxy(facts);
+        } catch (e) {
+        setAiError(e.message);
         }
         setInsight({ base, summary });
         // Hooks: ClinVar (gene) + Open Targets (associations)
@@ -442,6 +461,7 @@ export default function App() {
               <Select value={aiProvider} onChange={(e) => setAiProvider(e.target.value)}>
                 <option value="gemini">Google Gemini (recommended)</option>
                 <option value="groq">Groq (may need proxy due to CORS)</option>
+                <option value="claude">Claude (may need proxy due to CORS)</option>
               </Select>
               <Input placeholder="Enter your API key (kept in-browser)" value={apiKey} onChange={(e) => setApiKey(e.target.value)} type="password" />
               <div className="flex items-end"><div className="text-xs text-slate-500">Gemini works from the browser via REST; Groq may require a tiny server if CORS blocks.</div></div>
@@ -583,6 +603,7 @@ export default function App() {
               <li>Gemini calls stay in-browser via Google Generative Language REST (<code>gemini-1.5-flash</code>). Provide your API key above. Nothing is stored server-side.</li>
               <li>Groq calls may require a tiny server proxy if CORS blocks browser requests.</li>
               <li>Exports: click <em>Export JSON</em> or <em>Export CSV</em> for a snapshot of base facts, optional AI summary, and hook results.</li>
+              <li>AI summaries use <strong>Anthropic Claude</strong> via a local proxy</li>
             </ul>
           </CardContent>
         </Card>
