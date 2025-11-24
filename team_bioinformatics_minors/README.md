@@ -1,6 +1,9 @@
 ## OVERVIEW
 This project uses Google Gemini with data from MyGene.info, MyVariant.info, Ensembl, ClinicalTable, NCBI, and Uniprot to generate concise insight summaries on any given gene ID or SNP. This tool was designed for researchers who want fast insight into a gene or variant’s functional role, disease association, and known variants.
 
+## OUR APPROACH
+Given an input string, our program determines whether or not the string refers to a gene ID or a SNP. Based on the input type, requests are sent to different bioinformatics APIs (including MyGene.info, MyVariant.info, Ensembl, ClinicalTable, NCBI, and Uniprot) to fetch relevant .json data. This data is then passed to Google Gemini with a detailed prompt that instructs the LLM to only use the given data to summarize key points about the gene ID/ SNP. A concise summary with subsections for functional role, disease association, and known variants is returned and displayed to the frontend.
+
 ## GETTING STARTED
 Follow the steps below to run the app locally.
 
