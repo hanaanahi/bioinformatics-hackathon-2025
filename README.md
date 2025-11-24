@@ -18,6 +18,7 @@ Your task:
 3. **Create a new folder for your submission**
 
 Name it after your team or project (no spaces).
+
 Example: mkdir team_genespark
 
 4. **Add your project files**
@@ -38,11 +39,10 @@ git push origin main
 Go to your fork on GitHub → click “Compare & pull request” → add a short note about your project → click “Create pull request.”
 
 7. **Recommended File Strcture**
-bioinformatics-hackathon-2025/
-├── team_genespark/
-│   ├── README.md
-│   ├── main.py
-│   └── insight_summary.txt
+
+```
+bash bioinformatics-hackathon-2025/ ├── team_genespark/ │ ├── README.md │ ├── main.py │ └── insight_summary.txt
+```
 
 
 **Submission Deadline**:
