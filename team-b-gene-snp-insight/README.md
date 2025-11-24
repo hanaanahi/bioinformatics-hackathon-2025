@@ -181,5 +181,5 @@ MIT
 
 ## Contact: 
 
-open an issue or ping the maintainer in your repo.
+Open an issue or ping the maintainer of this repository.
 
